@@ -1,0 +1,1110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!--
+    Sentiment Analysis Bot - Web Interface
+    Author: RSK World (https://rskworld.in)
+    Founded by: Molla Samser
+    Designer & Tester: Rima Khatun
+    Contact: help@rskworld.in, +91 93305 39277
+    Year: 2026
+    -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sentiment Analysis Bot - RSK World</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #6366f1;
+            --secondary-color: #8b5cf6;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --dark-color: #1f2937;
+            --light-color: #f3f4f6;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .main-container {
+            padding: 2rem 0;
+        }
+
+        .chat-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+            max-height: 80vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .chat-header h1 {
+            margin: 0;
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+
+        .chat-header .subtitle {
+            margin: 0.5rem 0 0 0;
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.5rem;
+            background: #f8f9fa;
+            min-height: 400px;
+        }
+
+        .message {
+            margin-bottom: 1rem;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .message.user {
+            text-align: right;
+        }
+
+        .message.bot {
+            text-align: left;
+        }
+
+        .message-bubble {
+            display: inline-block;
+            max-width: 70%;
+            padding: 0.75rem 1rem;
+            border-radius: 18px;
+            word-wrap: break-word;
+        }
+
+        .message.user .message-bubble {
+            background: var(--primary-color);
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message.bot .message-bubble {
+            background: white;
+            color: var(--dark-color);
+            border: 1px solid #e5e7eb;
+            border-bottom-left-radius: 4px;
+        }
+
+        .sentiment-indicator {
+            display: inline-block;
+            padding: 0.25rem 0.5rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            margin-top: 0.5rem;
+            font-weight: 500;
+        }
+
+        .sentiment-positive {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .sentiment-negative {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .sentiment-neutral {
+            background: #f3f4f6;
+            color: #4b5563;
+        }
+
+        .emotion-tag {
+            display: inline-block;
+            padding: 0.125rem 0.375rem;
+            border-radius: 8px;
+            font-size: 0.7rem;
+            margin-right: 0.25rem;
+            background: #e0e7ff;
+            color: #3730a3;
+        }
+
+        .chat-input-container {
+            padding: 1.5rem;
+            background: white;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .chat-input {
+            flex: 1;
+            border: 2px solid #e5e7eb;
+            border-radius: 25px;
+            padding: 0.75rem 1rem;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .send-btn {
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .send-btn:hover {
+            background: var(--secondary-color);
+        }
+
+        .send-btn:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+        }
+
+        .quick-replies {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            padding: 0.5rem;
+        }
+
+        .quick-reply-btn {
+            padding: 0.4rem 0.8rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 15px;
+            background: white;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+        }
+
+        .quick-reply-btn:hover {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .quick-reply-toggle-btn {
+            background: #f3f4f6;
+            border: 2px solid #e5e7eb;
+            border-radius: 25px;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: var(--primary-color);
+        }
+
+        .quick-reply-toggle-btn:hover {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .quick-reply-toggle-btn.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        [data-theme="dark"] {
+            --primary-color: #818cf8;
+            --dark-color: #f3f4f6;
+            --light-color: #1f2937;
+        }
+
+        [data-theme="dark"] body {
+            background: linear-gradient(135deg, #1f2937 0%, #111827 100%);
+        }
+
+        [data-theme="dark"] .chat-container,
+        [data-theme="dark"] .stats-container {
+            background: #374151;
+            color: #f3f4f6;
+        }
+
+        [data-theme="dark"] .chat-messages {
+            background: #4b5563;
+        }
+
+        [data-theme="dark"] .message.bot .message-bubble {
+            background: #4b5563;
+            color: #f3f4f6;
+            border-color: #6b7280;
+        }
+
+        [data-theme="dark"] .stat-card {
+            background: #4b5563;
+            color: #f3f4f6;
+        }
+
+        .personality-bars {
+            margin-top: 1rem;
+        }
+
+        .advanced-features {
+            margin-top: 0.5rem;
+        }
+
+        .advanced-feature {
+            margin-top: 0.25rem;
+        }
+
+        .stats-container {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 1rem;
+            border-radius: 10px;
+            background: #f8f9fa;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            color: #6b7280;
+            margin-top: 0.25rem;
+        }
+
+        .controls {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .control-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s;
+        }
+
+        .btn-reset {
+            background: var(--danger-color);
+            color: white;
+        }
+
+        .btn-reset:hover {
+            background: #dc2626;
+        }
+
+        .btn-report {
+            background: var(--success-color);
+            color: white;
+        }
+
+        .btn-report:hover {
+            background: #059669;
+        }
+
+        .typing-indicator {
+            display: none;
+            text-align: left;
+            margin-bottom: 1rem;
+        }
+
+        .typing-indicator .message-bubble {
+            background: white;
+            border: 1px solid #e5e7eb;
+            padding: 1rem;
+        }
+
+        .typing-dots {
+            display: flex;
+            gap: 0.25rem;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #6b7280;
+            animation: typing 1.4s infinite;
+        }
+
+        .typing-dot:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .typing-dot:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        @keyframes typing {
+            0%, 60%, 100% {
+                transform: translateY(0);
+            }
+            30% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .footer-info {
+            text-align: center;
+            padding: 1rem;
+            color: white;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                padding: 1rem;
+            }
+            
+            .message-bubble {
+                max-width: 85%;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container main-container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <!-- Chat Container -->
+                <div class="chat-container">
+                    <div class="chat-header">
+                        <h1><i class="fas fa-smile"></i> Sentiment Analysis Bot</h1>
+                        <p class="subtitle">Real-time emotion detection and intelligent responses</p>
+                    </div>
+                    
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="message bot">
+                            <div class="message-bubble">
+                                Hello! I'm your sentiment analysis bot. I can understand your emotions and respond accordingly. How are you feeling today? 😊
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="typing-indicator" id="typingIndicator">
+                        <div class="message-bubble">
+                            <div class="typing-dots">
+                                <div class="typing-dot"></div>
+                                <div class="typing-dot"></div>
+                                <div class="typing-dot"></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="chat-input-container">
+                        <div id="quickReplies" class="quick-replies mb-2" style="display: none;">
+                            <button class="quick-reply-btn" data-message="I'm feeling great! 😊">Great!</button>
+                            <button class="quick-reply-btn" data-message="I'm feeling sad today 😢">Sad</button>
+                            <button class="quick-reply-btn" data-message="I'm feeling anxious 😰">Anxious</button>
+                            <button class="quick-reply-btn" data-message="I'm feeling excited! 🎉">Excited</button>
+                        </div>
+                        <div class="input-group">
+                            <button class="quick-reply-toggle-btn" id="quickReplyToggle" type="button" title="Quick Replies">
+                                <i class="fas fa-comment-dots"></i>
+                            </button>
+                            <input type="text" class="chat-input" id="messageInput" placeholder="Type your message here..." maxlength="500">
+                            <button class="send-btn" id="sendBtn" type="button">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Statistics Container -->
+                <div class="stats-container">
+                    <h3><i class="fas fa-chart-bar"></i> Sentiment Analysis Report</h3>
+                    <div class="controls">
+                        <button class="control-btn btn-reset" id="resetBtn">
+                            <i class="fas fa-redo"></i> Reset Chat
+                        </button>
+                        <button class="control-btn btn-report" id="reportBtn">
+                            <i class="fas fa-download"></i> Get Report
+                        </button>
+                        <button class="control-btn" id="exportBtn" style="background: #6366f1; color: white;">
+                            <i class="fas fa-file-export"></i> Export Chat
+                        </button>
+                        <button class="control-btn" id="darkModeBtn" style="background: #374151; color: white;">
+                            <i class="fas fa-moon"></i> Dark Mode
+                        </button>
+                        <button class="control-btn" id="voiceBtn" style="background: #10b981; color: white;">
+                            <i class="fas fa-microphone"></i> Voice
+                        </button>
+                    </div>
+                    <div class="stats-grid" id="statsGrid">
+                        <div class="stat-card">
+                            <div class="stat-value" id="totalConversations">0</div>
+                            <div class="stat-label">Total Messages</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="positiveCount">0</div>
+                            <div class="stat-label">Positive</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="negativeCount">0</div>
+                            <div class="stat-label">Negative</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value" id="neutralCount">0</div>
+                            <div class="stat-label">Neutral</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="footer-info">
+        <p>Created by <strong>RSK World</strong> | Founder: Molla Samser | Designer & Tester: Rima Khatun</p>
+        <p>Contact: <a href="mailto:help@rskworld.in" style="color: white;">help@rskworld.in</a> | +91 93305 39277</p>
+        <p>© 2026 RSK World. All rights reserved.</p>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Sentiment Analysis Bot JavaScript
+        // Author: RSK World (https://rskworld.in)
+        // Year: 2026
+        
+        class AdvancedSentimentBot {
+            constructor() {
+                this.chatMessages = document.getElementById('chatMessages');
+                this.messageInput = document.getElementById('messageInput');
+                this.sendBtn = document.getElementById('sendBtn');
+                this.resetBtn = document.getElementById('resetBtn');
+                this.reportBtn = document.getElementById('reportBtn');
+                this.exportBtn = document.getElementById('exportBtn');
+                this.darkModeBtn = document.getElementById('darkModeBtn');
+                this.voiceBtn = document.getElementById('voiceBtn');
+                this.quickReplyToggle = document.getElementById('quickReplyToggle');
+                this.typingIndicator = document.getElementById('typingIndicator');
+                
+                this.isDarkMode = localStorage.getItem('darkMode') === 'true';
+                this.isListening = false;
+                this.recognition = null;
+                
+                // Advanced features
+                this.userId = null;
+                this.userProfile = null;
+                this.personalityTraits = {};
+                this.emotionalTimeline = [];
+                
+                this.initEventListeners();
+                this.loadUserProfile();
+                this.initializeAdvancedFeatures();
+                this.initializeDarkMode();
+                this.initializeVoiceRecognition();
+                this.initializeQuickReplies();
+            }
+            
+            initializeAdvancedFeatures() {
+                // Add advanced UI elements
+                this.addAdvancedStatsPanel();
+                this.addPersonalityDisplay();
+                this.addEmotionalTimeline();
+            }
+            
+            addAdvancedStatsPanel() {
+                const statsContainer = document.getElementById('statsGrid');
+                if (statsContainer) {
+                    // Add advanced stats
+                    const advancedStats = [
+                        { id: 'personalityScore', label: 'Personality Insights', icon: 'fa-brain' },
+                        { id: 'emotionalContagion', label: 'Emotional Patterns', icon: 'fa-heart-pulse' },
+                        { id: 'satisfactionPrediction', label: 'Satisfaction Score', icon: 'fa-smile' },
+                        { id: 'conversationSimilarity', label: 'Context Awareness', icon: 'fa-network-wired' }
+                    ];
+                    
+                    advancedStats.forEach(stat => {
+                        const statCard = document.createElement('div');
+                        statCard.className = 'stat-card';
+                        statCard.innerHTML = `
+                            <div class="stat-value" id="${stat.id}">--</div>
+                            <div class="stat-label">${stat.label}</div>
+                        `;
+                        statsContainer.appendChild(statCard);
+                    });
+                }
+            }
+            
+            addPersonalityDisplay() {
+                const container = document.querySelector('.stats-container');
+                if (container) {
+                    const personalityPanel = document.createElement('div');
+                    personalityPanel.className = 'card shadow-sm mt-4';
+                    personalityPanel.innerHTML = `
+                        <div class="card-body">
+                            <h5 class="card-title"><i class="fas fa-brain me-2"></i>Personality Analysis</h5>
+                            <div id="personalityBars" class="personality-bars">
+                                <!-- Personality traits will be displayed here -->
+                            </div>
+                        </div>
+                    `;
+                    container.appendChild(personalityPanel);
+                }
+            }
+            
+            addEmotionalTimeline() {
+                const container = document.querySelector('.stats-container');
+                if (container) {
+                    const timelinePanel = document.createElement('div');
+                    timelinePanel.className = 'card shadow-sm mt-4';
+                    timelinePanel.innerHTML = `
+                        <div class="card-body">
+                            <h5 class="card-title"><i class="fas fa-chart-line me-2"></i>Emotional Timeline</h5>
+                            <canvas id="emotionalChart" width="400" height="200"></canvas>
+                        </div>
+                    `;
+                    container.appendChild(timelinePanel);
+                }
+            }
+            
+            async loadUserProfile() {
+                try {
+                    // Get or create user ID
+                    this.userId = this.getUserId();
+                    
+                    // Load user profile if exists
+                    const response = await fetch(`/api/user-profile/${this.userId}`);
+                    if (response.ok) {
+                        this.userProfile = await response.json();
+                        this.updatePersonalityDisplay();
+                    }
+                } catch (error) {
+                    console.log('User profile not found, will create on first message');
+                }
+            }
+            
+            getUserId() {
+                let userId = localStorage.getItem('sentimentBotUserId');
+                if (!userId) {
+                    userId = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                    localStorage.setItem('sentimentBotUserId', userId);
+                }
+                return userId;
+            }
+            
+            initEventListeners() {
+                this.sendBtn.addEventListener('click', () => this.sendMessage());
+                this.messageInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') this.sendMessage();
+                });
+                this.resetBtn.addEventListener('click', () => this.resetChat());
+                this.reportBtn.addEventListener('click', () => this.getAdvancedReport());
+                this.exportBtn.addEventListener('click', () => this.exportConversations());
+                this.darkModeBtn.addEventListener('click', () => this.toggleDarkMode());
+                this.voiceBtn.addEventListener('click', () => this.toggleVoiceInput());
+                
+                // Enable/disable send button
+                this.messageInput.addEventListener('input', () => {
+                    this.sendBtn.disabled = !this.messageInput.value.trim();
+                });
+            }
+
+            initializeDarkMode() {
+                if (this.isDarkMode) {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                    this.darkModeBtn.innerHTML = '<i class="fas fa-sun"></i> Light Mode';
+                }
+            }
+
+            toggleDarkMode() {
+                this.isDarkMode = !this.isDarkMode;
+                localStorage.setItem('darkMode', this.isDarkMode);
+                
+                if (this.isDarkMode) {
+                    document.documentElement.setAttribute('data-theme', 'dark');
+                    this.darkModeBtn.innerHTML = '<i class="fas fa-sun"></i> Light Mode';
+                } else {
+                    document.documentElement.removeAttribute('data-theme');
+                    this.darkModeBtn.innerHTML = '<i class="fas fa-moon"></i> Dark Mode';
+                }
+            }
+
+            initializeVoiceRecognition() {
+                if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                    this.recognition = new SpeechRecognition();
+                    this.recognition.continuous = false;
+                    this.recognition.interimResults = false;
+                    this.recognition.lang = 'en-US';
+
+                    this.recognition.onresult = (event) => {
+                        const transcript = event.results[0][0].transcript;
+                        this.messageInput.value = transcript;
+                        this.messageInput.dispatchEvent(new Event('input'));
+                    };
+
+                    this.recognition.onerror = (event) => {
+                        console.error('Speech recognition error:', event.error);
+                        this.voiceBtn.innerHTML = '<i class="fas fa-microphone"></i> Voice';
+                        this.isListening = false;
+                    };
+
+                    this.recognition.onend = () => {
+                        this.voiceBtn.innerHTML = '<i class="fas fa-microphone"></i> Voice';
+                        this.isListening = false;
+                    };
+                } else {
+                    this.voiceBtn.disabled = true;
+                    this.voiceBtn.title = 'Voice recognition not supported in your browser';
+                }
+            }
+
+            toggleVoiceInput() {
+                if (!this.recognition) return;
+
+                if (this.isListening) {
+                    this.recognition.stop();
+                    this.isListening = false;
+                    this.voiceBtn.innerHTML = '<i class="fas fa-microphone"></i> Voice';
+                } else {
+                    this.recognition.start();
+                    this.isListening = true;
+                    this.voiceBtn.innerHTML = '<i class="fas fa-stop"></i> Stop';
+                }
+            }
+
+            initializeQuickReplies() {
+                const quickReplies = document.getElementById('quickReplies');
+                if (!quickReplies) return;
+
+                quickReplies.querySelectorAll('.quick-reply-btn').forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const message = btn.getAttribute('data-message');
+                        this.messageInput.value = message;
+                        this.messageInput.dispatchEvent(new Event('input'));
+                        this.sendMessage();
+                    });
+                });
+
+                if (this.quickReplyToggle) {
+                    this.quickReplyToggle.addEventListener('click', () => {
+                        const isVisible = quickReplies.style.display !== 'none';
+                        quickReplies.style.display = isVisible ? 'none' : 'flex';
+                        this.quickReplyToggle.classList.toggle('active', !isVisible);
+                    });
+                }
+            }
+
+            exportConversations() {
+                const messages = Array.from(this.chatMessages.querySelectorAll('.message')).map(msg => {
+                    const bubble = msg.querySelector('.message-bubble');
+                    const sender = msg.classList.contains('user') ? 'User' : 'Bot';
+                    return `${sender}: ${bubble ? bubble.textContent.trim() : ''}`;
+                }).filter(line => line.length > 0);
+
+                const exportText = `Sentiment Analysis Bot - Conversation Export\n` +
+                    `==========================================\n\n` +
+                    `Exported: ${new Date().toLocaleString()}\n` +
+                    `User ID: ${this.userId}\n\n` +
+                    `Conversation:\n` +
+                    `-------------\n\n` +
+                    messages.join('\n\n') +
+                    `\n\n==========================================\n` +
+                    `Created by RSK World (https://rskworld.in)\n` +
+                    `© 2026 RSK World. All rights reserved.\n`;
+
+                this.downloadReport(exportText, 'conversation-export');
+            }
+            
+            async sendMessage() {
+                const message = this.messageInput.value.trim();
+                if (!message) return;
+                
+                // Add user message
+                this.addMessage(message, 'user');
+                this.messageInput.value = '';
+                this.sendBtn.disabled = true;
+                
+                // Show typing indicator
+                this.showTypingIndicator();
+                
+                try {
+                    const response = await fetch('/api/chat', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ 
+                            message: message,
+                            user_id: this.userId 
+                        })
+                    });
+                    
+                    const data = await response.json();
+                    
+                    if (response.ok) {
+                        this.addAdvancedBotMessage(data);
+                        this.updateAdvancedStats(data);
+                        this.updatePersonalityTraits(data.personality_traits || {});
+                        this.updateEmotionalTimeline(data.emotions || []);
+                    } else {
+                        this.addMessage('Sorry, I encountered an error. Please try again.', 'bot');
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    this.addMessage('Sorry, I\'m having trouble connecting. Please try again.', 'bot');
+                } finally {
+                    this.hideTypingIndicator();
+                    this.sendBtn.disabled = false;
+                    this.messageInput.focus();
+                }
+            }
+            
+            addMessage(text, sender) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = `message ${sender}`;
+                messageDiv.innerHTML = `
+                    <div class="message-bubble">${this.escapeHtml(text)}</div>
+                `;
+                this.chatMessages.appendChild(messageDiv);
+                this.scrollToBottom();
+            }
+            
+            addAdvancedBotMessage(data) {
+                const messageDiv = document.createElement('div');
+                messageDiv.className = 'message bot';
+                
+                let emotionsHtml = '';
+                if (data.emotions && data.emotions.length > 0) {
+                    emotionsHtml = data.emotions.map(emotion => 
+                        `<span class="emotion-tag">${emotion}</span>`
+                    ).join('');
+                }
+                
+                // Advanced features display
+                let advancedFeaturesHtml = '';
+                if (data.advanced_features) {
+                    const features = data.advanced_features;
+                    if (features.emotional_contagion && features.emotional_contagion.contagion_detected) {
+                        advancedFeaturesHtml += `
+                            <div class="advanced-feature">
+                                <i class="fas fa-heart-pulse text-danger me-1"></i>
+                                <span class="badge bg-danger">Emotional Contagion Detected: ${features.emotional_contagion.contagion_type}</span>
+                            </div>
+                        `;
+                    }
+                    
+                    if (features.predicted_satisfaction && features.predicted_satisfaction.confidence > 0.3) {
+                        const satisfaction = features.predicted_satisfaction.satisfaction_score;
+                        const satisfactionClass = satisfaction > 0.7 ? 'success' : satisfaction > 0.4 ? 'warning' : 'danger';
+                        advancedFeaturesHtml += `
+                            <div class="advanced-feature">
+                                <i class="fas fa-smile text-info me-1"></i>
+                                <span class="badge bg-${satisfactionClass}">Satisfaction: ${Math.round(satisfaction * 100)}%</span>
+                            </div>
+                        `;
+                    }
+                }
+                
+                messageDiv.innerHTML = `
+                    <div class="message-bubble">
+                        ${this.escapeHtml(data.response)}
+                        <div class="sentiment-indicator sentiment-${data.sentiment}">
+                            <i class="fas fa-${this.getSentimentIcon(data.sentiment)}"></i>
+                            ${data.sentiment.charAt(0).toUpperCase() + data.sentiment.slice(1)}
+                            (${Math.round(data.confidence * 100)}% confidence)
+                        </div>
+                        ${emotionsHtml ? `<div>${emotionsHtml}</div>` : ''}
+                        ${advancedFeaturesHtml ? `<div class="advanced-features mt-2">${advancedFeaturesHtml}</div>` : ''}
+                    </div>
+                `;
+                
+                this.chatMessages.appendChild(messageDiv);
+                this.scrollToBottom();
+            }
+            
+            getSentimentIcon(sentiment) {
+                const icons = {
+                    'positive': 'smile',
+                    'negative': 'frown',
+                    'neutral': 'meh'
+                };
+                return icons[sentiment] || 'meh';
+            }
+            
+            showTypingIndicator() {
+                this.typingIndicator.style.display = 'block';
+                this.scrollToBottom();
+            }
+            
+            hideTypingIndicator() {
+                this.typingIndicator.style.display = 'none';
+            }
+            
+            scrollToBottom() {
+                this.chatMessages.scrollTop = this.chatMessages.scrollHeight;
+            }
+            
+            escapeHtml(text) {
+                const div = document.createElement('div');
+                div.textContent = text;
+                return div.innerHTML;
+            }
+            
+            async updateStats() {
+                try {
+                    const response = await fetch('/api/report');
+                    const data = await response.json();
+                    
+                    if (response.ok && data.total_conversations > 0) {
+                        document.getElementById('totalConversations').textContent = data.total_conversations;
+                        document.getElementById('positiveCount').textContent = data.raw_stats.positive;
+                        document.getElementById('negativeCount').textContent = data.raw_stats.negative;
+                        document.getElementById('neutralCount').textContent = data.raw_stats.neutral;
+                    }
+                } catch (error) {
+                    console.error('Error updating stats:', error);
+                }
+            }
+            
+            async loadStats() {
+                this.updateStats();
+            }
+            
+            async resetChat() {
+                if (confirm('Are you sure you want to reset the chat history?')) {
+                    try {
+                        const response = await fetch('/api/reset', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ user_id: this.userId })
+                        });
+                        
+                        if (response.ok) {
+                            this.chatMessages.innerHTML = `
+                                <div class="message bot">
+                                    <div class="message-bubble">
+                                        Hello! I'm your sentiment analysis bot. I can understand your emotions and respond accordingly. How are you feeling today? 😊
+                                    </div>
+                                </div>
+                            `;
+                            this.updateStats();
+                            this.personalityTraits = {};
+                            this.emotionalTimeline = [];
+                            this.updatePersonalityDisplay();
+                        }
+                    } catch (error) {
+                        console.error('Error resetting chat:', error);
+                        alert('Error resetting chat. Please try again.');
+                    }
+                }
+            }
+            
+            async getReport() {
+                await this.getAdvancedReport();
+            }
+            
+        
+            updateAdvancedStats(data) {
+                this.updateStats();
+                
+                // Update advanced stats if available
+                if (data.advanced_features) {
+                    const features = data.advanced_features;
+                    if (features.predicted_satisfaction) {
+                        const satElem = document.getElementById('satisfactionPrediction');
+                        if (satElem) {
+                            satElem.textContent = Math.round(features.predicted_satisfaction.satisfaction_score * 100) + '%';
+                        }
+                    }
+                }
+            }
+            
+            updatePersonalityTraits(traits) {
+                if (!traits || Object.keys(traits).length === 0) return;
+                
+                this.personalityTraits = { ...this.personalityTraits, ...traits };
+                this.updatePersonalityDisplay();
+            }
+            
+            updatePersonalityDisplay() {
+                const container = document.getElementById('personalityBars');
+                if (!container) return;
+                
+                if (Object.keys(this.personalityTraits).length === 0) {
+                    container.innerHTML = '<p class="text-muted">Personality analysis will appear here after a few messages.</p>';
+                    return;
+                }
+                
+                let html = '';
+                for (const [trait, score] of Object.entries(this.personalityTraits)) {
+                    const percentage = Math.round(score * 100);
+                    html += `
+                        <div class="mb-2">
+                            <div class="d-flex justify-content-between mb-1">
+                                <span class="text-capitalize">${trait.replace('_', ' ')}</span>
+                                <span class="text-muted">${percentage}%</span>
+                            </div>
+                            <div class="progress" style="height: 8px;">
+                                <div class="progress-bar" role="progressbar" style="width: ${percentage}%" aria-valuenow="${percentage}" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </div>
+                    `;
+                }
+                container.innerHTML = html;
+            }
+            
+            updateEmotionalTimeline(emotions) {
+                if (!emotions || emotions.length === 0) return;
+                
+                this.emotionalTimeline.push({
+                    timestamp: new Date(),
+                    emotions: emotions
+                });
+                
+                // Keep only last 20 entries
+                if (this.emotionalTimeline.length > 20) {
+                    this.emotionalTimeline.shift();
+                }
+            }
+            
+            async getAdvancedReport() {
+                try {
+                    const userId = this.userId || 'all';
+                    const response = await fetch(`/api/report?user_id=${userId}`);
+                    const data = await response.json();
+                    
+                    if (response.ok) {
+                        const reportText = this.generateAdvancedReportText(data);
+                        this.downloadReport(reportText, 'advanced-sentiment-report');
+                    } else {
+                        alert('Error generating report. Please try again.');
+                    }
+                } catch (error) {
+                    console.error('Error getting advanced report:', error);
+                    alert('Error generating report. Please try again.');
+                }
+            }
+            
+            generateAdvancedReportText(data) {
+                let report = 'ADVANCED Sentiment Analysis Bot Report\n';
+                report += '==========================================\n\n';
+                report += `Generated: ${new Date().toLocaleString()}\n`;
+                report += `User ID: ${this.userId || 'All Users'}\n`;
+                report += `Total Conversations: ${data.total_conversations || 0}\n\n`;
+                
+                if (data.sentiment_distribution) {
+                    report += 'Sentiment Distribution:\n';
+                    report += `Positive: ${data.raw_stats.positive || 0} (${(data.sentiment_distribution.positive || 0).toFixed(1)}%)\n`;
+                    report += `Negative: ${data.raw_stats.negative || 0} (${(data.sentiment_distribution.negative || 0).toFixed(1)}%)\n`;
+                    report += `Neutral: ${data.raw_stats.neutral || 0} (${(data.sentiment_distribution.neutral || 0).toFixed(1)}%)\n\n`;
+                }
+                
+                if (data.personality_analysis) {
+                    report += 'Personality Analysis:\n';
+                    report += '---------------------\n';
+                    for (const [trait, stats] of Object.entries(data.personality_analysis)) {
+                        report += `${trait}: Average ${(stats.average * 100).toFixed(1)}%\n`;
+                    }
+                    report += '\n';
+                }
+                
+                if (data.user_specific) {
+                    report += 'User-Specific Data:\n';
+                    report += '-------------------\n';
+                    report += `Total Messages: ${data.user_specific.total_messages || 0}\n`;
+                    if (data.user_specific.satisfaction_prediction) {
+                        const sat = data.user_specific.satisfaction_prediction;
+                        report += `Satisfaction Score: ${Math.round(sat.satisfaction_score * 100)}% (Confidence: ${Math.round(sat.confidence * 100)}%)\n`;
+                    }
+                    report += '\n';
+                }
+                
+                if (data.recent_conversations && data.recent_conversations.length > 0) {
+                    report += 'Recent Conversations:\n';
+                    report += '---------------------\n';
+                    data.recent_conversations.slice(-10).forEach((conv, index) => {
+                        report += `${index + 1}. ${new Date(conv.timestamp).toLocaleString()}\n`;
+                        report += `   User: ${conv.user_input}\n`;
+                        report += `   Sentiment: ${conv.sentiment}\n`;
+                        report += `   Emotions: ${(conv.emotions || []).join(', ') || 'None'}\n`;
+                        report += `   Bot: ${conv.response}\n\n`;
+                    });
+                }
+                
+                report += '\n==========================================\n';
+                report += 'Generated by Advanced Sentiment Analysis Bot\n';
+                report += 'Created by RSK World (https://rskworld.in)\n';
+                report += '© 2026 RSK World. All rights reserved.\n';
+                
+                return report;
+            }
+            
+            downloadReport(content, filename) {
+                const blob = new Blob([content], { type: 'text/plain' });
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${filename || 'sentiment-report'}-${new Date().toISOString().split('T')[0]}.txt`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                window.URL.revokeObjectURL(url);
+            }
+        }
+        
+        // Initialize bot when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            new AdvancedSentimentBot();
+        });
+    </script>
+</body>
+</html>

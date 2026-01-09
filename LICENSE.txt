@@ -1,0 +1,65 @@
+MIT License
+
+Copyright (c) 2026 RSK World (https://rskworld.in)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software for educational and development purposes, subject to the following
+conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+EDUCATIONAL USE ONLY:
+
+This Software is provided for educational and development purposes. You may:
+
+- Use the Software for learning, teaching, and educational projects
+- Modify and experiment with the Software for educational purposes
+- Share the Software with students and educators for educational use
+- Include the Software in academic projects and research
+
+RESTRICTIONS:
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+ADDITIONAL TERMS:
+
+1. Attribution: When using this Software, you must include the original 
+   copyright notice and attribution to RSK World (https://rskworld.in).
+
+2. Educational Purpose: This Software is intended for educational and 
+   development purposes only. Commercial use requires explicit written 
+   permission from RSK World.
+
+3. Modification: You may modify the Software for educational purposes, 
+   but you must clearly indicate any modifications made.
+
+4. Distribution: You may distribute the Software in educational contexts, 
+   but you must include this license file and the original copyright notice.
+
+5. Disclaimer: The authors and RSK World are not responsible for any 
+   damages or issues arising from the use of this Software.
+
+---
+
+RSK World Educational License
+https://rskworld.in
+
+Founded by: Molla Samser
+Designer & Tester: Rima Khatun
+Contact: help@rskworld.in | +91 93305 39277
+Address: Nutanhat, Mongolkote, Purba Burdwan, West Bengal, India, 713147
+
+For commercial licensing or usage permissions beyond educational purposes, 
+please contact: help@rskworld.in
+
+---
+
+© 2026 RSK World. All rights reserved.

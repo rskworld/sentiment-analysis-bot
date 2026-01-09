@@ -1,0 +1,94 @@
+# Sentiment Analysis Bot Docker Compose Configuration
+# Author: RSK World (https://rskworld.in)
+# Founded by: Molla Samser
+# Designer & Tester: Rima Khatun
+# Contact: help@rskworld.in, +91 93305 39277
+# Year: 2026
+
+version: '3.8'
+
+services:
+  sentiment-bot:
+    build: .
+    container_name: sentiment-analysis-bot
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=production
+      - FLASK_DEBUG=False
+      - HOST=0.0.0.0
+      - PORT=5000
+      - LOG_LEVEL=INFO
+    volumes:
+      - ./logs:/app/logs
+      - ./uploads:/app/uploads
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - sentiment-network
+
+  # Optional: Nginx reverse proxy for production
+  nginx:
+    image: nginx:alpine
+    container_name: sentiment-bot-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./ssl:/etc/nginx/ssl:ro
+    depends_on:
+      - sentiment-bot
+    restart: unless-stopped
+    networks:
+      - sentiment-network
+    profiles:
+      - production
+
+  # Optional: Redis for rate limiting and caching
+  redis:
+    image: redis:alpine
+    container_name: sentiment-bot-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    networks:
+      - sentiment-network
+    profiles:
+      - advanced
+
+  # Optional: PostgreSQL for persistent storage
+  postgres:
+    image: postgres:13-alpine
+    container_name: sentiment-bot-postgres
+    environment:
+      - POSTGRES_DB=sentiment_bot
+      - POSTGRES_USER=sentiment_user
+      - POSTGRES_PASSWORD=sentiment_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+    networks:
+      - sentiment-network
+    profiles:
+      - database
+
+volumes:
+  redis_data:
+    driver: local
+  postgres_data:
+    driver: local
+
+networks:
+  sentiment-network:
+    driver: bridge

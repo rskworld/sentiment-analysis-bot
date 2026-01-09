@@ -1,0 +1,68 @@
+# Advanced Sentiment Analysis Bot Requirements
+# Author: RSK World (https://rskworld.in)
+# Founded by: Molla Samser
+# Designer & Tester: Rima Khatun
+# Contact: help@rskworld.in, +91 93305 39277
+# Year: 2026
+
+# Core Web Framework
+Flask==2.3.3
+Flask-CORS==4.0.0
+
+# Natural Language Processing
+nltk==3.8.1
+textblob==0.17.1
+spacy==3.6.1
+
+# Machine Learning & Data Science
+numpy==1.24.3
+pandas==1.5.3
+scikit-learn==1.3.0
+
+# Text Processing and Analysis
+regex==2023.8.8
+
+# HTTP Requests
+requests==2.31.0
+
+# Session Management
+Flask-Session==0.5.0
+
+# Development and Testing
+pytest==7.4.2
+pytest-flask==1.2.0
+
+# Production Server
+gunicorn==21.2.0
+
+# Environment Variables
+python-dotenv==1.0.0
+
+# Logging
+loguru==0.7.2
+
+# Advanced Analytics (optional)
+# matplotlib==3.7.2
+# seaborn==0.12.2
+# plotly==5.15.0
+
+# Database Support (optional)
+# sqlalchemy==2.0.20
+# redis==4.6.0
+
+# Advanced ML Models (optional)
+# transformers==4.33.2
+# torch==2.0.1
+# xgboost==1.7.6
+
+# Text Similarity and Clustering
+# gensim==4.3.2
+
+# Network Analysis (optional)
+# networkx==3.1
+
+# Note: 
+# 1. Install spaCy English model: python -m spacy download en_core_web_sm
+# 2. NLTK data will be downloaded automatically on first run
+# 3. For production deployment, consider using a proper WSGI server
+# 4. Optional packages can be installed based on specific needs
